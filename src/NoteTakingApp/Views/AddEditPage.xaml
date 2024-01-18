@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:NoteTakingApp.ViewModels;assembly=NoteTakingApp"
+             xmlns:controls="clr-namespace:NoteTakingApp.Views.Controls;assembly=NoteTakingApp"
+             xmlns:custom="clr-namespace:NoteTakingApp.Views.Custom;assembly=NoteTakingApp"
+             xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             x:Class="NoteTakingApp.Views.AddEditPage"
+             base:ViewModelLocator.AutoWireViewModel="True"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBgColor}">
+    <ContentPage.Content>
+        <Grid VerticalOptions="FillAndExpand"
+              RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Main -->
+            <ScrollView Grid.Row="1">
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             Padding="{StaticResource PageDefaultPaddingSize}"
+                             Spacing="{StaticResource LargeSpacing}">
+                    <pancakeView:PancakeView Padding="15,0"
+                                             BackgroundColor="{StaticResource MainLightBgColor}"
+                                             CornerRadius="5">
+                        <custom:BorderlessEntry BackgroundColor="{StaticResource MainLightBgColor}"
+                                                Keyboard="Text"
+                                                Placeholder="Title"
+                                                Style="{StaticResource EntryStyle}"
+                                                Text="{Binding NoteTitle}" />
+                    </pancakeView:PancakeView>
+                    <pancakeView:PancakeView Padding="15,5"
+                                             BackgroundColor="{StaticResource MainLightBgColor}"
+                                             CornerRadius="5">
+                        <Editor BackgroundColor="{StaticResource MainLightBgColor}"
+                                Keyboard="Text"
+                                Placeholder="Description (Optional)"
+                                HeightRequest="120"
+                                Style="{StaticResource EntryStyle}"
+                                Text="{Binding NoteDescription}" />
+                    </pancakeView:PancakeView>
+                    <Label FontFamily="{StaticResource RegularFontFamily}"
+                           FontSize="{StaticResource LabelFontSize}"
+                           HorizontalTextAlignment="Start"
+                           Margin="10,0,0,0"
+                           Text="{Binding ErrorText, StringFormat='{0}'}"
+                           TextColor="{StaticResource ErrorTextColor}">
+                        <Label.Triggers>
+                            <DataTrigger Binding="{Binding ErrorText.Length}"
+                                         TargetType="Label"
+                                         Value="0">
+                                <Setter Property="IsVisible"
+                                        Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Button BackgroundColor="{StaticResource AccentColor}"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource ButtonStyle}"
+                            Text="SAVE"
+                            VerticalOptions="EndAndExpand">
+                        <Button.Triggers>
+                            <DataTrigger Binding="{Binding IsEdit}"
+                                         TargetType="Button"
+                                         Value="True">
+                                <Setter Property="Command"
+                                        Value="{Binding UpdateCommand}" />
+                                <Setter Property="Text"
+                                        Value="UPDATE" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </StackLayout>
+            </ScrollView>
+
+            <!-- Toolbar -->
+            <controls:ToolbarView Grid.Row="0"
+                                  x:Name="Toolbar"
+                                  Text="{Binding PageTitle}"
+                                  SubText="{Binding PageSubtitle}"
+                                  FontFamily="{StaticResource MediumFontFamily}"
+                                  FontSize="{StaticResource BigFontSize}"
+                                  TextColor="{StaticResource TertiaryTextColor}"
+                                  IconFont="{StaticResource LightIconFontFamily}"
+                                  IconColor="{StaticResource IconsColor}"
+                                  HasIcon="True"
+                                  BarBackgroundColor="{StaticResource PrimaryColor}"
+                                  Command="{Binding BackCommand}" />
+
+            <!-- Loading -->
+            <controls:LoadingView Grid.RowSpan="2"
+                                  Text="{Binding LoadingMessage}"
+                                  IsLoading="{Binding IsBusy}"
+                                  IsVisible="{Binding IsBusy}" />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

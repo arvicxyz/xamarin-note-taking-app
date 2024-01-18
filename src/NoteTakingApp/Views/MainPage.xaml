@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage x:Class="NoteTakingApp.Views.MainPage"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:NoteTakingApp.ViewModels;assembly=NoteTakingApp"
+             xmlns:behaviors="clr-namespace:NoteTakingApp.Behaviors;assembly=NoteTakingApp"
+             xmlns:constants="clr-namespace:NoteTakingApp.Constants;assembly=NoteTakingApp"
+             xmlns:controls="clr-namespace:NoteTakingApp.Views.Controls;assembly=NoteTakingApp"
+             xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             base:ViewModelLocator.AutoWireViewModel="True"
+             BackgroundColor="{StaticResource PageBgColor}"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Content>
+        <Grid RowSpacing="0"
+              VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--  Empty List  -->
+            <controls:InformationView Grid.Row="1"
+                                      Icon="{Static constants:FontAwesomeIcon.StickyNote}"
+                                      IconFont="{StaticResource LightIconFontFamily}"
+                                      IsVisible="False"
+                                      Margin="0,150,0,0"
+                                      Text="You have no notes added yet&#x0a;click on the pen icon to add"
+                                      VerticalOptions="Start">
+                <controls:InformationView.Triggers>
+                    <DataTrigger Binding="{Binding IsBusy}"
+                                 TargetType="controls:InformationView"
+                                 Value="False">
+                        <Setter Property="IsVisible"
+                                Value="True" />
+                    </DataTrigger>
+                </controls:InformationView.Triggers>
+            </controls:InformationView>
+            
+            <!--  Main  -->
+            <ListView Grid.Row="1"
+                      BackgroundColor="{StaticResource MainLightBgColor}"
+                      HasUnevenRows="True"
+                      IsGroupingEnabled="True"
+                      ItemsSource="{Binding GroupedData}"
+                      IsVisible="False"
+                      SelectionMode="None"
+                      SeparatorVisibility="None">
+                <ListView.Triggers>
+                    <DataTrigger Binding="{Binding HasNotes}"
+                                 TargetType="ListView"
+                                 Value="True">
+                        <Setter Property="IsVisible"
+                                Value="True" />
+                    </DataTrigger>
+                </ListView.Triggers>
+                <ListView.Behaviors>
+                    <behaviors:EventToCommandBehavior Command="{Binding SelectItemCommand}"
+                                                      EventName="ItemTapped" />
+                </ListView.Behaviors>
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Padding="15,10"
+                                   FontFamily="{StaticResource MediumFontFamily}"
+                                   FontSize="{StaticResource LabelFontSize}"
+                                   Text="{Binding Key}"
+                                   TextColor="{StaticResource PrimaryDarkColor}"
+                                   VerticalTextAlignment="Center" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <pancakeView:PancakeView BackgroundColor="White"
+                                                     CornerRadius="5"
+                                                     Margin="8,4">
+                                <Grid Padding="10"
+                                      ColumnSpacing="0"
+                                      VerticalOptions="Start">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <StackLayout Grid.Column="0"
+                                                 Orientation="Vertical"
+                                                 Spacing="3"
+                                                 VerticalOptions="Center">
+                                        <Label FontFamily="{StaticResource MediumFontFamily}"
+                                               FontSize="{StaticResource BigFontSize}"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Text="{Binding Title}"
+                                               TextColor="{StaticResource PrimaryTextColor}" />
+                                        <Label FontAttributes="Italic"
+                                               FontFamily="{StaticResource RegularFontFamily}"
+                                               FontSize="{StaticResource LabelFontSize}"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="1"
+                                               Text="{Binding Description}"
+                                               TextColor="{StaticResource SubTextColor}" />
+                                        <Label FontFamily="{StaticResource LightFontFamily}"
+                                               FontSize="{StaticResource TextFontSize}"
+                                               Text="{Binding DateLastUpdated, StringFormat='{}{0:h:mm tt}'}"
+                                               TextColor="{StaticResource SecondaryTextColor}" />
+                                    </StackLayout>
+                                    <Label Grid.Column="1"
+                                           FontFamily="{StaticResource LightIconFontFamily}"
+                                           FontSize="{StaticResource IconFontBigSize}"
+                                           Text="{Static constants:FontAwesomeIcon.AngleRight}"
+                                           TextColor="{StaticResource AccentColor}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                                <pancakeView:PancakeView.Triggers>
+                                    <DataTrigger Binding="{Binding IsFavourite}"
+                                                 TargetType="pancakeView:PancakeView"
+                                                 Value="True">
+                                        <Setter Property="BackgroundColor"
+                                                Value="{StaticResource PrimaryLightColor}" />
+                                    </DataTrigger>
+                                </pancakeView:PancakeView.Triggers>
+                            </pancakeView:PancakeView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Footer>
+                    <BoxView HeightRequest="{StaticResource SafeBottomSize}" />
+                </ListView.Footer>
+            </ListView>
+
+            <!--  Floating Action Button  -->
+            <Grid Grid.Row="1"
+                  HeightRequest="70"
+                  HorizontalOptions="End"
+                  Margin="0,0,20,20"
+                  VerticalOptions="End"
+                  WidthRequest="70">
+                <pancakeView:PancakeView CornerRadius="35">
+                    <pancakeView:PancakeView.Shadow>
+                        <pancakeView:DropShadow BlurRadius="10"
+                                                Offset="0,10"
+                                                Color="{StaticResource ShadowColor}" />
+                    </pancakeView:PancakeView.Shadow>
+                </pancakeView:PancakeView>
+                <Button Padding="20"
+                        Command="{Binding AddCommand}"
+                        CornerRadius="35"
+                        BackgroundColor="{StaticResource AccentColor}"
+                        FontFamily="{StaticResource LightIconFontFamily}"
+                        FontSize="{StaticResource IconFontSize}"
+                        Text="{x:Static constants:FontAwesomeIcon.Pencil}" />
+            </Grid>
+
+            <!--  Toolbar  -->
+            <controls:ToolbarView x:Name="Toolbar"
+                                  Grid.Row="0"
+                                  BarBackgroundColor="{StaticResource PrimaryColor}"
+                                  FontFamily="DancingScript"
+                                  FontSize="{StaticResource HugeFontSize}"
+                                  HasIcon="False"
+                                  IconAlignment="Center"
+                                  IconColor="{StaticResource IconsColor}"
+                                  IconFont="{StaticResource LightIconFontFamily}"
+                                  IconSize="{StaticResource IconFontSize}"
+                                  Text="{Binding PageTitle}"
+                                  TextColor="{StaticResource TertiaryTextColor}"
+                                  ToolbarItemText="Sync"
+                                  ToolbarItemCommand="{Binding SyncCommand}" />
+
+            <!--  Loading  -->
+            <controls:LoadingView Grid.RowSpan="2"
+                                  IsLoading="{Binding IsBusy}"
+                                  IsVisible="{Binding IsBusy}"
+                                  Text="{Binding LoadingMessage}" />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

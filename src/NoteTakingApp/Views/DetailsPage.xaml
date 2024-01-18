@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:base="clr-namespace:NoteTakingApp.ViewModels;assembly=NoteTakingApp"
+             xmlns:constants="clr-namespace:NoteTakingApp.Constants;assembly=NoteTakingApp"
+             xmlns:controls="clr-namespace:NoteTakingApp.Views.Controls;assembly=NoteTakingApp"
+             x:Class="NoteTakingApp.Views.DetailsPage"
+             base:ViewModelLocator.AutoWireViewModel="True"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource PageBgColor}">
+    <ContentPage.Content>
+        <Grid VerticalOptions="FillAndExpand"
+              RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Main -->
+            <ScrollView Grid.Row="1">
+                <StackLayout Orientation="Vertical"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand"
+                             Padding="{StaticResource PageDefaultPaddingSize}"
+                             Spacing="{StaticResource LargeSpacing}">
+                    <Label FontFamily="{StaticResource MediumFontFamily}"
+                           FontSize="{StaticResource HugeFontSize}"
+                           Text="{Binding Note.Title}"
+                           TextColor="{StaticResource PrimaryTextColor}" />
+                    <Label FontFamily="{StaticResource RegularFontFamily}"
+                           FontSize="{StaticResource HeaderFontSize}"
+                           Text="{Binding Note.Description}"
+                           TextColor="{StaticResource SubTextColor}" />
+                    <Label FontFamily="{StaticResource LightFontFamily}"
+                           FontSize="{StaticResource TitleFontSize}"
+                           Text="{Binding Note.DateLastUpdated, StringFormat='Last Update: {0:h:mm tt, dd MMMM yyyy}'}"
+                           TextColor="{StaticResource SecondaryTextColor}" />
+                    <Label FontFamily="{StaticResource LightFontFamily}"
+                           FontSize="{StaticResource TitleFontSize}"
+                           Text="{Binding Note.DateCreated, StringFormat='Created: {0:h:mm tt, dd MMMM yyyy}'}"
+                           TextColor="{StaticResource SecondaryTextColor}" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="{StaticResource MediumSpacing}"
+                          VerticalOptions="EndAndExpand">
+                        <Button Grid.Column="0"
+                                BackgroundColor="{StaticResource EditButtonColor}"
+                                Command="{Binding EditCommand}"
+                                Style="{StaticResource ButtonStyle}"
+                                Text="EDIT"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button Grid.Column="1"
+                                BackgroundColor="{StaticResource DeleteButtonColor}"
+                                Command="{Binding DeleteCommand}"
+                                Style="{StaticResource ButtonStyle}"
+                                Text="DELETE"
+                                HorizontalOptions="FillAndExpand" />
+                    </Grid>
+
+                </StackLayout>
+            </ScrollView>
+
+            <!-- Toolbar -->
+            <controls:ToolbarView Grid.Row="0"
+                                  x:Name="Toolbar"
+                                  Text="{Binding PageTitle}"
+                                  SubText="{Binding PageSubtitle}"
+                                  FontFamily="{StaticResource MediumFontFamily}"
+                                  FontSize="{StaticResource BigFontSize}"
+                                  TextColor="{StaticResource TertiaryTextColor}"
+                                  IconFont="{StaticResource LightIconFontFamily}"
+                                  IconColor="{StaticResource IconsColor}"
+                                  HasIcon="True"
+                                  ToolbarItemText="{Static constants:FontAwesomeIcon.Heart}"
+                                  ToolbarItemTextColor="{Binding FavouriteIconColor}"
+                                  ToolbarItemFont="{StaticResource SolidIconFontFamily}"
+                                  ToolbarItemSize="{StaticResource IconFontBigSize}"
+                                  ToolbarItemCommand="{Binding FavouriteCommand}"
+                                  ToolbarItemCommandParameter="{x:Reference Toolbar}"
+                                  BarBackgroundColor="{StaticResource PrimaryColor}"
+                                  Command="{Binding BackCommand}" />
+
+            <!-- Loading -->
+            <controls:LoadingView Grid.RowSpan="2"
+                                  Text="{Binding LoadingMessage}"
+                                  IsLoading="{Binding IsBusy}"
+                                  IsVisible="{Binding IsBusy}" />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
